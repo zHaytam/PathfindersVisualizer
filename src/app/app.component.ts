@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import Map from '../pathfinding/map';
+import { ResizeService } from './resize.service';
 
 @Component({
     selector: 'app-root',
@@ -8,10 +9,13 @@ import Map from '../pathfinding/map';
 })
 export class AppComponent {
 
+    @ViewChild('map') mapEl: ElementRef;
     public map: Map;
 
-    constructor() {
+    constructor(private resizeService: ResizeService) {
         this.map = new Map();
     }
+
+
 
 }
