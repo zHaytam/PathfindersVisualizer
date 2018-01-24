@@ -1,23 +1,23 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterContentInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { setTimeout } from 'timers';
 import AStarAlgorithm from '../pathfinding/algorithms/aStarAlgorithm';
 import AStarAlgorithmWithArray from '../pathfinding/algorithms/aStarAlgorithmWithArray';
 import PathResult from '../pathfinding/algorithms/pathResult';
 import Map from '../pathfinding/map';
-import Tile from '../pathfinding/tile';
+import Tile, { TileTypes } from '../pathfinding/tile';
 
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements AfterContentInit {
 
     @ViewChild('mapDiv') mapEl: ElementRef;
     @ViewChild('inputMapWidth') inputMapWidth: ElementRef;
     @ViewChild('inputMapHeight') inputMapHeight: ElementRef;
     @ViewChild('inputObstaclesProb') inputObstaclesProb: ElementRef;
     public map: Map;
-    public result: PathResult;
     private algorithm: AStarAlgorithm;
 
     constructor() {
@@ -25,7 +25,7 @@ export class AppComponent implements AfterViewInit {
         this.algorithm = new AStarAlgorithmWithArray();
     }
 
-    ngAfterViewInit() {
+    ngAfterContentInit() {
         this.initializeMap();
     }
 
@@ -54,14 +54,12 @@ export class AppComponent implements AfterViewInit {
             classes += ' end-tile';
         }
 
-        if (this.result) {
-            if (this.result.path.find((pnode) => pnode.tile === tile) !== undefined) {
-                classes += ' bg-success';
-            } else if (this.result.closedList.find((cnode) => cnode.tile === tile) !== undefined) {
-                classes += ' bg-secondary';
-            } else if (this.result.openList.find((onode) => onode.tile === tile) !== undefined) {
-                classes += ' bg-info';
-            }
+        if (tile.type === TileTypes.Path) {
+            classes += ' bg-success';
+        } else if (tile.type === TileTypes.Closed) {
+            classes += ' bg-secondary';
+        } else if (tile.type === TileTypes.Opened) {
+            classes += ' bg-info';
         }
 
         return classes;
@@ -76,8 +74,33 @@ export class AppComponent implements AfterViewInit {
     }
 
     private run() {
-        console.log(this.mapEl);
-        this.result = this.algorithm.getShortestPath(this.map);
+        const result = this.algorithm.getShortestPath(this.map);
+
+        if (result) {
+            this.animate(result);
+        } else {
+            console.log('NOT FOUND');
+        }
+    }
+
+    private animate(result: PathResult) {
+        if (result.openList.length === 0 && result.closedList.length === 0 && result.path.length !== 0) {
+            const pnode = result.path.shift();
+            pnode.tile.type = TileTypes.Path;
+            setTimeout(() => this.animate(result), 4);
+        } else {
+            if (result.openList.length !== 0) {
+                const onode = result.openList.shift();
+                onode.tile.type = TileTypes.Opened;
+            }
+
+            if (result.closedList.length !== 0) {
+                const cnode = result.closedList.shift();
+                cnode.tile.type = TileTypes.Closed;
+            }
+
+            setTimeout(() => this.animate(result), 4);
+        }
     }
 
 }

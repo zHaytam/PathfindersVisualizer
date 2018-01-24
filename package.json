@@ -24,6 +24,7 @@
     "core-js": "^2.4.1",
     "element-resize-detector": "^1.1.13",
     "rxjs": "^5.5.6",
+    "timers": "^0.1.1",
     "zone.js": "^0.8.19"
   },
   "devDependencies": {

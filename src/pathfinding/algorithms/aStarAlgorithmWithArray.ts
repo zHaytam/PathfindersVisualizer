@@ -72,7 +72,7 @@ export default class AStarAlgorithmWithArray extends AStarAlgorithm {
 
         while (currentNode.parent) {
             currentNode = currentNode.parent;
-            path.push(currentNode);
+            path.unshift(currentNode);
         }
 
         return path;
