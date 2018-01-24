@@ -1,27 +1,43 @@
 import { notImplemented } from '@angular/core/src/render3/util';
+import Map from '../map';
 import Tile from '../tile';
-import Path from './path';
+import Node from './node';
+import PathResult from './pathResult';
 
 export default abstract class AStarAlgorithm {
 
-    public start: Tile; // { x, y }
-    public end: Tile; // { x, y }
+    protected map: Map;
 
-    public heuristic(currentPoint: Tile): number {
-        if (!this.start || !this.end) {
-            throw new Error('The ending point must be configured first.');
+    public heuristic(currentTile: Tile): number {
+        if (!this.map) {
+            throw new Error('Call getShortestPath first.');
         }
 
-        return Math.max(Math.abs(currentPoint.row - this.end.row), Math.abs(currentPoint.col - this.end.col));
+        return Math.max(Math.abs(currentTile.row - this.map.end.row), Math.abs(currentTile.col - this.map.end.col));
     }
 
-    public getShortestPath(start: Tile, end: Tile): Path {
-        this.start = start;
-        this.end = end;
-
+    public getShortestPath(map: Map): PathResult {
+        this.map = map;
         return this.getPath();
     }
 
-    protected abstract getPath(): Path;
+    protected findLowestF(openList: Node[]): any {
+        let lowestNode = openList[0];
+        let lowestIndex = 0;
+
+        for (let i = 1; i < openList.length; i++) {
+            if (openList[i].f < lowestNode.f) {
+                lowestNode = openList[i];
+                lowestIndex = i;
+            }
+        }
+
+        return {
+            node: lowestNode,
+            index: lowestIndex
+        };
+    }
+
+    protected abstract getPath(): PathResult;
 
 }

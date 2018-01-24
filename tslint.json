@@ -3,6 +3,7 @@
     "node_modules/codelyzer"
   ],
   "rules": {
+    "radix": false,
     "ordered-imports": true,
     "arrow-return-shorthand": true,
     "callable-types": true,
@@ -89,7 +90,6 @@
       true,
       "single"
     ],
-    "radix": true,
     "semicolon": [
       true,
       "always"
