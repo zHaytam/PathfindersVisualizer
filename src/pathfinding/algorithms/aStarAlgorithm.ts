@@ -8,7 +8,7 @@ import PathResult from './pathResult';
 export default class AStarAlgorithm extends Algorithm {
 
     protected getPath(): PathResult {
-
+        const changements = new Array<[Tile, TileTypes]>();
         const openList = new Array<Node>();
         const closedList = new Array<Node>();
         const startNode = new Node(this.map.start);
@@ -22,19 +22,19 @@ export default class AStarAlgorithm extends Algorithm {
             const currentNode = current.node;
 
             if (currentNode.tile === this.map.end) {
-                return new PathResult(this.constructPath(currentNode), openList, closedList);
+                return new PathResult(this.constructPath(currentNode), openList.length, closedList.length, changements);
             }
 
             openList.splice(current.index, 1);
             closedList.push(currentNode);
-            setTimeout(() => currentNode.tile.type = TileTypes.Closed, 4);
-            this.addValidNeighborsToOpenList(currentNode, openList, closedList);
+            changements.push([currentNode.tile, TileTypes.Closed]);
+            this.addValidNeighborsToOpenList(currentNode, openList, closedList, changements);
         }
 
         return undefined;
     }
 
-    private addValidNeighborsToOpenList(currentNode: Node, openList: Node[], closedList: Node[]) {
+    private addValidNeighborsToOpenList(currentNode: Node, openList: Node[], closedList: Node[], changements: [Tile, TileTypes][]) {
         for (let r = -1; r < 2; r++) {
             for (let c = -1; c < 2; c++) {
                 if (r === 0 && c === 0) {
@@ -60,7 +60,7 @@ export default class AStarAlgorithm extends Algorithm {
                 const olnode = openList.find((node) => node.tile === neighbourTile);
                 if (!olnode) {
                     openList.push(neighbour);
-                    setTimeout(() => neighbourTile.type = TileTypes.Opened, 4);
+                    changements.push([neighbourTile, TileTypes.Opened]);
                 } else if (neighbour.g < olnode.g) {
                     olnode.g = neighbour.g;
                     olnode.parent = neighbour.parent;

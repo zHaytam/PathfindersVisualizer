@@ -1,5 +1,5 @@
 import { AfterContentInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { setTimeout } from 'timers';
+import { clearTimeout, setTimeout } from 'timers';
 import Algorithm from '../pathfinding/algorithms/algorithm';
 import AStarAlgorithm from '../pathfinding/algorithms/aStarAlgorithm';
 import PathResult from '../pathfinding/algorithms/pathResult';
@@ -19,10 +19,12 @@ export class AppComponent implements AfterContentInit {
     @ViewChild('inputObstaclesProb') inputObstaclesProb: ElementRef;
     public map: Map;
     private algorithm: Algorithm;
+    private animationTimeouts: any[];
 
     constructor() {
         this.map = new Map();
         this.algorithm = new AStarAlgorithm();
+        this.animationTimeouts = [];
     }
 
     ngAfterContentInit() {
@@ -74,37 +76,30 @@ export class AppComponent implements AfterContentInit {
     }
 
     private run() {
+        this.clear();
         const start = window.performance.now();
         const result = this.algorithm.getShortestPath(this.map);
         const timeTaken = window.performance.now() - start;
 
         if (result) {
-            console.log(`Took ${timeTaken}ms.`);
-            setTimeout(() => {
-                result.path.forEach((pnode) => pnode.tile.type = TileTypes.Path);
-            }, 4);
+            this.animate(result);
         } else {
             console.log('NOT FOUND');
         }
     }
 
+    private clear() {
+        this.animationTimeouts.forEach((at) => clearTimeout(at));
+        this.map.tiles.forEach((tile) => tile.type = TileTypes.None);
+    }
+
     private animate(result: PathResult) {
-        if (result.openList.length === 0 && result.closedList.length === 0 && result.path.length !== 0) {
-            const pnode = result.path.shift();
-            pnode.tile.type = TileTypes.Path;
-            setTimeout(() => this.animate(result), 4);
+        if (result.changements.length === 0) {
+            result.path.forEach((pnode) => pnode.tile.type = TileTypes.Path);
         } else {
-            if (result.openList.length !== 0) {
-                const onode = result.openList.shift();
-                onode.tile.type = TileTypes.Opened;
-            }
-
-            if (result.closedList.length !== 0) {
-                const cnode = result.closedList.shift();
-                cnode.tile.type = TileTypes.Closed;
-            }
-
-            setTimeout(() => this.animate(result), 4);
+            const changement: [Tile, TileTypes] = result.changements.shift();
+            changement[0].type = changement[1];
+            this.animationTimeouts.push(setTimeout(() => this.animate(result), 50));
         }
     }
 
