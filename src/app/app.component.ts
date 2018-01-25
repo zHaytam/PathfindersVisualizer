@@ -1,7 +1,7 @@
 import { AfterContentInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { setTimeout } from 'timers';
+import Algorithm from '../pathfinding/algorithms/algorithm';
 import AStarAlgorithm from '../pathfinding/algorithms/aStarAlgorithm';
-import AStarAlgorithmWithArray from '../pathfinding/algorithms/aStarAlgorithmWithArray';
 import PathResult from '../pathfinding/algorithms/pathResult';
 import Map from '../pathfinding/map';
 import Tile, { TileTypes } from '../pathfinding/tile';
@@ -18,11 +18,11 @@ export class AppComponent implements AfterContentInit {
     @ViewChild('inputMapHeight') inputMapHeight: ElementRef;
     @ViewChild('inputObstaclesProb') inputObstaclesProb: ElementRef;
     public map: Map;
-    private algorithm: AStarAlgorithm;
+    private algorithm: Algorithm;
 
     constructor() {
         this.map = new Map();
-        this.algorithm = new AStarAlgorithmWithArray();
+        this.algorithm = new AStarAlgorithm();
     }
 
     ngAfterContentInit() {
@@ -74,10 +74,15 @@ export class AppComponent implements AfterContentInit {
     }
 
     private run() {
+        const start = window.performance.now();
         const result = this.algorithm.getShortestPath(this.map);
+        const timeTaken = window.performance.now() - start;
 
         if (result) {
-            this.animate(result);
+            console.log(`Took ${timeTaken}ms.`);
+            setTimeout(() => {
+                result.path.forEach((pnode) => pnode.tile.type = TileTypes.Path);
+            }, 4);
         } else {
             console.log('NOT FOUND');
         }
