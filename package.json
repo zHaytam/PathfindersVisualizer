@@ -23,6 +23,8 @@
     "@angular/router": "^5.2.0",
     "core-js": "^2.4.1",
     "element-resize-detector": "^1.1.13",
+    "ng2-nouislider": "^1.7.7",
+    "nouislider": "^11.0.3",
     "rxjs": "^5.5.6",
     "timers": "^0.1.1",
     "zone.js": "^0.8.19"

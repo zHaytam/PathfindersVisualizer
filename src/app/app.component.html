@@ -41,11 +41,14 @@
       </div>
     </div>
     <hr>
-    <div class="row">
-      <div class="col">
-        <button class="btn btn-success float-right" (click)="run()">Run</button>
+    <div class="form-group row">
+      <label for="inputSpeed" class="col-sm-2 col-form-label">Speed</label>
+      <div class="col-sm-10">
+        <!-- <input type="range" id="inputSpeed" class="form-control" min="4" max="80" value="40"> -->
+        <nouislider [connect]="true" [min]="0" [max]="15" [(ngModel)]="inputSpeedRange"></nouislider>
       </div>
     </div>
+    <button class="btn btn-success float-right" (click)="run()">Run</button>
   </div>
   <div id="map" class="fh" #mapDiv>
     <div *ngFor="let tile of map.tiles" [ngClass]="getTileClasses(tile)" class="tile" [style.left.px]="tile.col * 32 + 10" [style.top.px]="tile.row * 32 + 10">

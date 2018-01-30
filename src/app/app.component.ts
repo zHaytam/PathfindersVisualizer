@@ -17,6 +17,7 @@ export class AppComponent implements AfterContentInit {
     @ViewChild('inputMapWidth') inputMapWidth: ElementRef;
     @ViewChild('inputMapHeight') inputMapHeight: ElementRef;
     @ViewChild('inputObstaclesProb') inputObstaclesProb: ElementRef;
+    public inputSpeedRange = [4, 80];
     public map: Map;
     private algorithm: Algorithm;
     private animationTimeouts: any[];
@@ -72,6 +73,7 @@ export class AppComponent implements AfterContentInit {
         this.map.width = parseInt(this.inputMapWidth.nativeElement.value);
         this.map.height = parseInt(this.inputMapHeight.nativeElement.value);
         this.map.obstacleProb = parseFloat(this.inputObstaclesProb.nativeElement.value);
+        this.clear();
         this.map.generate();
     }
 
@@ -99,7 +101,7 @@ export class AppComponent implements AfterContentInit {
         } else {
             const changement: [Tile, TileTypes] = result.changements.shift();
             changement[0].type = changement[1];
-            this.animationTimeouts.push(setTimeout(() => this.animate(result), 50));
+            this.animationTimeouts.push(setTimeout(() => this.animate(result), 20));
         }
     }
 
