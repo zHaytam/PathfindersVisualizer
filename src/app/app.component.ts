@@ -17,7 +17,7 @@ export class AppComponent implements AfterContentInit {
     @ViewChild('inputMapWidth') inputMapWidth: ElementRef;
     @ViewChild('inputMapHeight') inputMapHeight: ElementRef;
     @ViewChild('inputObstaclesProb') inputObstaclesProb: ElementRef;
-    public inputSpeedRange = [4, 80];
+    public inputSpeed = 20;
     public map: Map;
     private algorithm: Algorithm;
     private animationTimeouts: any[];
@@ -101,7 +101,8 @@ export class AppComponent implements AfterContentInit {
         } else {
             const changement: [Tile, TileTypes] = result.changements.shift();
             changement[0].type = changement[1];
-            this.animationTimeouts.push(setTimeout(() => this.animate(result), 20));
+            console.log(this.inputSpeed);
+            this.animationTimeouts.push(setTimeout(() => this.animate(result), this.inputSpeed));
         }
     }
 
