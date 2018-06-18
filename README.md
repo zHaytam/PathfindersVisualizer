@@ -1,3 +1,3 @@
 # Pathfinders Visualizer
 
-An Angular App to visualize two pathfinders (A* and Dijkstra)
+An Angular App to visualize pathfinders (currently only A*)!
